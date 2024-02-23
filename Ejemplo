@@ -1,0 +1,57 @@
+##### MAP OF MEXICO #####
+# Get the base map of Mexico
+world <- ne_countries(scale = "medium", country = "Mexico", returnclass = "sf")
+
+# Numeric codes for all states in alphabetical order
+state_code <- 1:32
+
+# Corresponding state names in alphabetical order
+state_names <- c(
+  "Aguascalientes", "Baja California", "Baja California Sur",
+  "Campeche", "Coahuila", "Colima", "Chiapas", "Chihuahua",
+  "Ciudad de México", "Durango", "Guanajuato", "Guerrero", "Hidalgo",
+  "Jalisco", "México", "Michoacán", "Morelos", "Nayarit",
+  "Nuevo León", "Oaxaca", "Puebla", "Querétaro", "Quintana Roo",
+  "San Luis Potosí", "Sinaloa", "Sonora", "Tabasco", "Tamaulipas",
+  "Tlaxcala", "Veracruz", "Yucatán", "Zacatecas"
+)
+
+# Create the state_mapping data frame
+state_mapping <- data.frame(
+  ent = state_code
+)
+
+# Merge data frames using a left join
+merged_data <- left_join(state_mapping, Mexico, by = "ent")
+
+# Calculate the proportion and make sure it's numeric
+merged_data <- merged_data %>%
+  group_by(ent) %>%
+  mutate(PropMH = sum(None == T) / n()) %>%
+  summarise(ent,PropMH) %>% 
+  distinct(ent, .keep_all = TRUE) 
+
+# Read the shapefile
+mexican_states <- st_read('C:/Users/adria/Dropbox/UIEM/LEAD/Proyectos/BoD LATAM/mexican-states.shX') %>%
+  select(name, geometry)
+mexican_states$ent <- as.numeric(factor(mexican_states$name, levels = unique(sort(mexican_states$name))))
+
+merged_data <- left_join(merged_data, mexican_states, by = "ent")
+
+# Plot the map
+map <- ggplot(merged_data) +
+  geom_sf(aes(fill = PropMH, geometry = geometry), color = "white", lwd = 0.2) +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", name = "Prevalence (%)", labels = scales::percent_format(scale = 100)) +  # Display percentages
+  labs(title = "Prevalence of Metabolically Healthy Obesity by State") +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),  # Remove major grid lines
+    panel.grid.minor = element_blank(),  # Remove minor grid lines
+    panel.border = element_blank(),      # Remove panel border
+    axis.text = element_blank(),         # Remove axis text
+    axis.ticks = element_blank()         # Remove axis ticks
+  )
+
+print(map)
+
+ggsave("Map.bmp", units="cm", width=21, height=14, dpi=600)
