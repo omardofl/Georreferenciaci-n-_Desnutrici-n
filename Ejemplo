@@ -1,3 +1,48 @@
+####1er intento
+#Instalacion de paquetes para graficar en R
+install.packages("sf")
+install.packages("ggplot2")
+
+library(sf)
+library(ggplot2)
+#Cargar el shapefile
+# Especifica la ruta del archivo
+ruta_archivo <- "C:/Users/omi_d/Documents/UNICEF/Reporte de desnutricion nacional/Bases _DGIS_sta/Shape files/mexican-states.shp"
+# Lee el archivo utilizando st_read
+datos_mapa <- st_read(ruta_archivo)
+#Ver columnas en shapefiles
+# Cargar el paquete sf si aún no está cargado
+  # Ver las capas en el shapefile
+st_layers("C:/Users/omi_d/Documents/UNICEF/Reporte de desnutricion nacional/Bases _DGIS_sta/Shape files/mexican-states.shp")
+
+###### Cargar los datos de desnutrición de mapas
+# Cargar la biblioteca readxl "Nacional 2022 <5y"
+library(readxl)
+# Especificar la ruta del archivo Excel y el nombre de la hoja
+ruta_archivo <- "UNICEF/Reporte de desnutricion nacional/Bases _DGIS_sta/Reporte/inf_mapas.xlsx"
+nombre_hoja <- "Nacional 2022 <5y"
+# Leer solo la hoja específica del archivo Excel
+inf_mapas <- read_excel(ruta_archivo, sheet = nombre_hoja)
+# Ver los datos en una ventana separada
+View(inf_mapas)
+
+
+# Cargar la biblioteca readxl "Nacional 2018 <5y"
+library(readxl)
+# Especificar la ruta del archivo Excel y el nombre de la hoja
+ruta_archivo <- "UNICEF/Reporte de desnutricion nacional/Bases _DGIS_sta/Reporte/inf_mapas.xlsx"
+nombre_hoja <- "Nacional 2018 <5y"
+# Leer solo la hoja específica del archivo Excel
+inf_mapas <- read_excel(ruta_archivo, sheet = nombre_hoja)
+# Ver los datos en una ventana separada
+View(inf_mapas)
+
+
+
+
+
+#############################################
+#Ejemplo
 ##### MAP OF MEXICO #####
 # Get the base map of Mexico
 world <- ne_countries(scale = "medium", country = "Mexico", returnclass = "sf")
